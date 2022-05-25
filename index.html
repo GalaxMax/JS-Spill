@@ -67,42 +67,41 @@
 <script>
     var tl=gsap.timeline();
 
-    setInterval(autoflytt,1000)
+    setInterval(autoflytt,100)
     function autoflytt() {
-        gsap.set(".fallingBlock",{top:"+=5"})
+
     }
 
-    setInterval(blocks,1000)
+    setInterval(blocks,200)
     function blocks(){
         let fallingBlock = document.createElement("div")
         let frameEl = document.querySelector("#frame")
 
-
-        let displaceHeight = Math.floor(Math.random() * 500) + 1;
-        let displacewidth = Math.floor(Math.random() * 500) + 1;
+        let displaceHeight = Math.floor(Math.random() * -200) + 1;
+        let displacewidth = Math.floor(Math.random() * 460) + 1;
         fallingBlock.classList.add('fallingBlock');
-        frameEl.appendChild(fallingBlock)
         fallingBlock.style.top = displaceHeight + "px";
         fallingBlock.style.left = displacewidth + "px";
+        frameEl.appendChild(fallingBlock);
+        tl.to(".fallingBlock", {top: "+=50", ease: "none", repeat: -1, repeatRefresh:true})
+        if(Draggable.hitTest("#firkant",".fallingBlock","2%")) {
+            alert('Game Over')
     }
-
-
-
 
     function spilloop() {
         document.onkeydown=flyttfirkant;
         function flyttfirkant(evt) {
             let tast = evt.code;
-            if(tast==="ArrowRight") {
+            if(tast==="KeyD") {
                 gsap.set("#firkant", {left: "+=10"});
             }
-            if(tast==="ArrowLeft") {
+            if(tast==="KeyA") {
                 gsap.set("#firkant", {left: "-=10"});
             }
-            if(tast==="ArrowUp") {
+            if(tast==="KeyW") {
                 gsap.set("#firkant", {top: "-=10"});
             }
-            if(tast==="ArrowDown") {
+            if(tast==="KeyS") {
                 gsap.set("#firkant", {top: "+=10"});
             }
         }
@@ -110,14 +109,16 @@
             gsap.set("#firkant", {left: "+=10"});
         }
         if(Draggable.hitTest("#firkant",".T","2%")) {
-            gsap.set("#firkant", {top: "+=5"});
+            gsap.set("#firkant", {top: "+=10"});
         }
         if(Draggable.hitTest("#firkant",".R","1%")) {
-            gsap.set("#firkant", {left: "-=5"});
+            gsap.set("#firkant", {left: "-=10"});
         }
         if(Draggable.hitTest("#firkant",".B","2%")) {
-            gsap.set("#firkant", {top: "-=5"});
+            gsap.set("#firkant", {top: "-=10"});
         }
+        }
+
         requestAnimationFrame(spilloop)
     }
     requestAnimationFrame(spilloop)
