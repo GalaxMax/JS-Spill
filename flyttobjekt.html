@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/Draggable.min.js"></script>
+    <style>
+        #firkant {
+            position: absolute;
+            top:500px;
+            left:660px;
+            width:30px;
+            height: 30px;
+            background-color:red;
+        }
+        #nr1 {
+            position: absolute;
+            top:400px;
+            left:700px;
+            height: 200px;
+            width:5px;
+            background-color: green;
+        }
+        #nr2 {
+            position: absolute;
+            top:400px;
+            left:500px;
+            height:5px;
+            width:200px;
+            background-color: green;
+        }
+        #nr3 {
+            position: absolute;
+            top:450px;
+            left:650px;
+            height: 150px;
+            width:5px;
+            background-color: green;
+        }
+        #nr4 {
+            position: absolute;
+            top:450px;
+            left:450px;
+            height:5px;
+            width:200px;
+            background-color: green;
+        }
+    </style>
+</head>
+<script>
+    var tl=gsap.timeline();
+    tl.to("#firkant",2,{top:"+=50"})
+    //setInterval(autoflytt,1000)
+    function autoflytt() {
+        gsap.set(".L",{top:"+=5"})
+    }
+
+    function spilloop() {
+        var tl=gsap.timeline();
+        Draggable.create("#firkant")
+        document.onkeydown=flyttfirkant;
+        function flyttfirkant(evt) {
+            let tast = evt.code;
+            if(tast==="ArrowRight") {
+                tl.to("#firkant",1,{top:"+=150",ease: "elastic.out(2.5, 0.1)"})
+                .to("#firkant",1,{left:"+=150",ease: "elastic.out(2.5, 0.1)"})
+                .to("#firkant",1,{top:"-=150",ease: "elastic.out(2.5, 0.1)"})
+
+            }
+            if(tast==="ArrowLeft") {
+                gsap.set("#firkant", {left: "-=5"});
+            }
+            if(tast==="ArrowUp") {
+                gsap.set("#firkant", {top: "-=5"});
+            }
+            if(tast==="ArrowDown") {
+                gsap.set("#firkant", {top: "+=5"});
+            }
+            if(Draggable.hitTest("#firkant",".L","2%")) {
+                gsap.set("#firkant", {left: "-=5"});
+            }
+            if(Draggable.hitTest("#firkant",".T","2%")) {
+                gsap.set("#firkant", {top: "+=5"});
+            }
+            if(Draggable.hitTest("#firkant",".R","2%")) {
+                gsap.set("#firkant", {left: "+=5"});
+            }
+            if(Draggable.hitTest("#firkant",".B","2%")) {
+                gsap.set("#firkant", {top: "-=5"});
+                gsap.to("#firkant", {top: "-=5",duration:2});
+
+            }
+        }
+        requestAnimationFrame(spilloop)
+    }
+    requestAnimationFrame(spilloop)
+</script>
+<body>
+<div id="firkant"></div>
+<div id="nr1" class="L"></div>
+<div id="nr2" class="L"></div>
+<div id="nr3" class="L"></div>
+<div id="nr4" class="L"></div>
+</body>
+</body>
+</html>

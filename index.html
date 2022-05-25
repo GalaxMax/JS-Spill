@@ -3,8 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <title>Spill</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/Draggable.min.js"></script>
+    <style>
+        #firkant {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width:30px;
+            height: 30px;
+            background-color:red;
+        }
+        #wallRight {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height:500px;
+            width:5px;
+            background-color: green;
+        }
+        #wallTop {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height:5px;
+            width:500px;
+            background-color: green;
+        }
+        #wallLeft {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height:500px;
+            width:5px;
+            background-color: green;
+        }
+        #wallBottom {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height:5px;
+            width:500px;
+            background-color: green;
+        }
+        #frame {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid #FFFF00;
+            padding: 250px;
+        }
+        .fallingBlock{
+            position: absolute;
+            height:20px;
+            width:20px;
+            background-color: blue;
+        }
+    </style>
 </head>
 <body>
+<script>
+    var tl=gsap.timeline();
 
+    setInterval(autoflytt,1000)
+    function autoflytt() {
+        gsap.set(".fallingBlock",{top:"+=5"})
+    }
+
+    setInterval(blocks,1000)
+    function blocks(){
+        let fallingBlock = document.createElement("div")
+        let frameEl = document.querySelector("#frame")
+
+
+        let displaceHeight = Math.floor(Math.random() * 500) + 1;
+        let displacewidth = Math.floor(Math.random() * 500) + 1;
+        fallingBlock.classList.add('fallingBlock');
+        frameEl.appendChild(fallingBlock)
+        fallingBlock.style.top = displaceHeight + "px";
+        fallingBlock.style.left = displacewidth + "px";
+    }
+
+
+
+
+    function spilloop() {
+        document.onkeydown=flyttfirkant;
+        function flyttfirkant(evt) {
+            let tast = evt.code;
+            if(tast==="ArrowRight") {
+                gsap.set("#firkant", {left: "+=10"});
+            }
+            if(tast==="ArrowLeft") {
+                gsap.set("#firkant", {left: "-=10"});
+            }
+            if(tast==="ArrowUp") {
+                gsap.set("#firkant", {top: "-=10"});
+            }
+            if(tast==="ArrowDown") {
+                gsap.set("#firkant", {top: "+=10"});
+            }
+        }
+        if(Draggable.hitTest("#firkant",".L","2%")) {
+            gsap.set("#firkant", {left: "+=10"});
+        }
+        if(Draggable.hitTest("#firkant",".T","2%")) {
+            gsap.set("#firkant", {top: "+=5"});
+        }
+        if(Draggable.hitTest("#firkant",".R","1%")) {
+            gsap.set("#firkant", {left: "-=5"});
+        }
+        if(Draggable.hitTest("#firkant",".B","2%")) {
+            gsap.set("#firkant", {top: "-=5"});
+        }
+        requestAnimationFrame(spilloop)
+    }
+    requestAnimationFrame(spilloop)
+</script>
+<div id="frame">
+<div id="firkant"></div>
+<div id="wallRight" class="R"></div>
+<div id="wallLeft" class="L"></div>
+<div id="wallTop" class="T"></div>
+<div id="wallBottom" class="B"></div>
+</div>
 </body>
 </html>
