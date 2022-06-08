@@ -6,7 +6,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/Draggable.min.js"></script>
     <style>
+        #gameStart{
+            z-index: 2;
+            background-size: cover;
+            position: absolute;
+            text-align: center;
+            vertical-align: middle;
+            margin: 0;
+            width: 100%;
+            height: 1400px;
+            background-color: white;
+        }
+        #gameStartButton {
+            font-size: 18px;
+            width: 200px;
+            height: 40px;
+            background-color: #49F273;
+            border-radius: 45px;
+            cursor: pointer;
+        }
+        #gameStartButton:hover:not(.active) {
+            background-color: green;
+        }
         #firkant {
+            background-image: url("bilder/artsy.jpg");
             position: absolute;
             left: 50%;
             top: 50%;
@@ -47,6 +70,14 @@
             width:500px;
             background-color: green;
         }
+        #scoreBottom {
+            position: absolute;
+            bottom: -600px;
+            right: 0;
+            height:5px;
+            width:500px;
+            background-color: green;
+        }
         #frame {
             position: absolute;
             left: 50%;
@@ -61,73 +92,174 @@
             width:20px;
             background-color: blue;
         }
+        #score{
+            position: absolute;
+            font-size: 200px;
+            font-family: Impact;
+        }
     </style>
 </head>
 <body>
+<div id="gameStart">
+    <h1>Welcome to FallingBlocks!</h1>
+    <p>Catch as many blocks you can before any of them hit the bottom. Is RNG on your side?</p>
+    <h2>Highscore:</h2> <h2 id="highScore"></h2>
+    <button id="gameStartButton">Play</button>
+</div>
+<div id="score"></div>
+<div id="frame">
+    <div id="fruktSpawn"></div>
+    <div id="firkant"></div>
+    <div id="wallRight" class="R"></div>
+    <div id="wallLeft" class="L"></div>
+    <div id="wallTop" class="T"></div>
+    <div id="wallBottom" class="B"></div>
+    <div id="scoreBottom" class="B"></div>
+</div>
 <script>
-    var tl=gsap.timeline();
+    let flyttblokk
+    let fruktdrop
+    let resetCheck = 0
+    let k = 0;
+    let fruktSpawnEl = document.querySelector('#fruktSpawn')
+    let scoreEl = document.querySelector('#score')
+    let scoreNumberEl = 0
+    let highScoreEl = document.querySelector('#highScore')
+    highScoreEl.innerHTML = localStorage.highScore
 
-    setInterval(autoflytt,1000)
+    if (!localStorage.highScore){
+        localStorage.highScore = 0
+    }
+
     function autoflytt() {
         gsap.set(".fallingBlock",{top:"+=5"})
     }
+    function lagerFrukter(){
+        let fruktCreate = document.createElement("div")
 
-    setInterval(blocks,1000)
-    function blocks(){
-        let fallingBlock = document.createElement("div")
-        let frameEl = document.querySelector("#frame")
+        let displaceHeight = Math.floor(Math.random() * -100) + 1;
+        let displacewidth = Math.floor(Math.random() * 400) + 1;
 
-
-        let displaceHeight = Math.floor(Math.random() * 500) + 1;
-        let displacewidth = Math.floor(Math.random() * 500) + 1;
-        fallingBlock.classList.add('fallingBlock');
-        frameEl.appendChild(fallingBlock)
-        fallingBlock.style.top = displaceHeight + "px";
-        fallingBlock.style.left = displacewidth + "px";
+        fruktCreate.id='mynt'+k
+        fruktCreate.classList.add('fallingBlock');
+        fruktSpawnEl.appendChild(fruktCreate)
+        fruktCreate.style.top = displaceHeight + "px";
+        fruktCreate.style.left = displacewidth + "px";
+        k++
     }
-
-
-
-
     function spilloop() {
-        document.onkeydown=flyttfirkant;
+        document.onkeydown = flyttfirkant;
+
         function flyttfirkant(evt) {
             let tast = evt.code;
-            if(tast==="ArrowRight") {
+            if (tast === "KeyD") {
                 gsap.set("#firkant", {left: "+=10"});
             }
-            if(tast==="ArrowLeft") {
+            if (tast === "KeyA") {
                 gsap.set("#firkant", {left: "-=10"});
             }
-            if(tast==="ArrowUp") {
+            if (tast === "KeyW") {
                 gsap.set("#firkant", {top: "-=10"});
             }
-            if(tast==="ArrowDown") {
+            if (tast === "KeyS") {
                 gsap.set("#firkant", {top: "+=10"});
             }
         }
-        if(Draggable.hitTest("#firkant",".L","2%")) {
+        for (let j = 0; j <= k - 1; j++) {
+            if (resetCheck < 1) {
+                if (Draggable.hitTest("#firkant", "#mynt" + j, "2%")) {
+                    gsap.set('#mynt' + j, {top: 1000})
+                    scoreNumberEl++
+                    scoreEl.innerHTML = scoreNumberEl
+                }
+            }
+            if (resetCheck < 1) {
+                if (Draggable.hitTest(".B", "#mynt" + j, "15%")) {
+                    if (localStorage.highScore < scoreNumberEl) {
+                        localStorage.highScore = scoreNumberEl
+                    }
+                    gameOver()
+                    resetGame()
+                }
+            }
+            if (resetCheck < 1) {
+                if (Draggable.hitTest("#scoreBottom", "#mynt" + j, "15%")) {
+                    gsap.set("#mynt" + j, {top: '-=5'})
+                }
+            }
+        }
+
+        if (Draggable.hitTest("#firkant", ".L", "2%")) {
             gsap.set("#firkant", {left: "+=10"});
         }
-        if(Draggable.hitTest("#firkant",".T","2%")) {
-            gsap.set("#firkant", {top: "+=5"});
+        if (Draggable.hitTest("#firkant", ".T", "2%")) {
+            gsap.set("#firkant", {top: "+=10"});
         }
-        if(Draggable.hitTest("#firkant",".R","1%")) {
-            gsap.set("#firkant", {left: "-=5"});
+        if (Draggable.hitTest("#firkant", ".R", "1%")) {
+            gsap.set("#firkant", {left: "-=10"});
         }
-        if(Draggable.hitTest("#firkant",".B","2%")) {
-            gsap.set("#firkant", {top: "-=5"});
+        if (Draggable.hitTest("#firkant", ".B", "2%")) {
+            gsap.set("#firkant", {top: "-=10"});
         }
         requestAnimationFrame(spilloop)
     }
-    requestAnimationFrame(spilloop)
+    function gameStart(){
+        flyttblokk = setInterval(autoflytt,50)
+        fruktdrop = setInterval(lagerFrukter,5000)
+        resetCheck = 0
+        k = 0;
+        scoreNumberEl = 0
+        scoreEl.innerHTML = scoreNumberEl
+        lagerFrukter()
+        requestAnimationFrame(spilloop)
+    }
+    function gameOver(){
+        resetCheck = 2
+        let gameEnd = document.createElement("div");
+        let gameOverText = document.createElement("h1");
+        let gameOverScoreText = document.createElement("h2");
+        let gameOverScore = document.createElement("h2");
+        let gameOverHighScoreText = document.createElement("h3");
+        let gameOverHighScore = document.createElement("h2");
+        let retry = document.createElement('button');
+
+        gameOverText.innerHTML = 'GAME OVER'
+        gameOverScoreText.innerHTML = 'Score:'
+        gameOverScore.innerHTML = scoreNumberEl
+        gameOverHighScoreText.innerHTML = 'Highscore:'
+        gameOverHighScore.innerHTML = localStorage.highScore
+        retry.innerHTML = 'Retry'
+
+        gameEnd.setAttribute('id','gameStart');
+        retry.setAttribute('id','gameStartButton');
+
+        gameEnd.appendChild(gameOverText);
+        gameEnd.appendChild(gameOverScoreText);
+        gameEnd.appendChild(gameOverScore);
+        gameEnd.appendChild(gameOverHighScoreText);
+        gameEnd.appendChild(gameOverHighScore);
+        gameEnd.appendChild(retry);
+        document.body.appendChild(gameEnd)
+
+        retry.addEventListener("click", prepareGame);
+    }
+    function prepareGame() {
+        let gameEndEl = document.getElementById('gameStart')
+        gameEndEl.remove();
+        console.log('test')
+        gameStart()
+    }
+    function resetGame() {
+        clearInterval(flyttblokk)
+        clearInterval(fruktdrop)
+        while (fruktSpawnEl.firstChild) {
+            fruktSpawnEl.removeChild(fruktSpawnEl.lastChild);
+        }
+    }
+
+    let gameStartButtonEl = document.querySelector("#gameStartButton");
+    gameStartButtonEl.addEventListener("click", prepareGame);
+
 </script>
-<div id="frame">
-<div id="firkant"></div>
-<div id="wallRight" class="R"></div>
-<div id="wallLeft" class="L"></div>
-<div id="wallTop" class="T"></div>
-<div id="wallBottom" class="B"></div>
-</div>
 </body>
 </html>

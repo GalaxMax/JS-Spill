@@ -63,10 +63,7 @@
         function flyttfirkant(evt) {
             let tast = evt.code;
             if(tast==="ArrowRight") {
-                tl.to("#firkant",1,{top:"+=150",ease: "elastic.out(2.5, 0.1)"})
-                .to("#firkant",1,{left:"+=150",ease: "elastic.out(2.5, 0.1)"})
-                .to("#firkant",1,{top:"-=150",ease: "elastic.out(2.5, 0.1)"})
-
+                gsap.set("#firkant", {left: "+=5"});
             }
             if(tast==="ArrowLeft") {
                 gsap.set("#firkant", {left: "-=5"});
