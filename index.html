@@ -6,6 +6,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/Draggable.min.js"></script>
     <style>
+        body {
+            background-color: #e5e5f7;
+            background:
+            linear-gradient(135deg, #444cf755 25%, transparent 25%) -10px 0/ 20px 20px,
+            linear-gradient(225deg, #444cf7 25%, transparent 25%) -10px 0/ 20px 20px,
+            linear-gradient(315deg, #444cf755 25%, transparent 25%) 0px 0/ 20px 20px,
+            linear-gradient(45deg, #444cf7 25%, #e5e5f7 25%) 0px 0/ 20px 20px;
+        }
         #gameStart{
             z-index: 2;
             background-size: cover;
@@ -29,14 +37,13 @@
             background-color: green;
         }
         #firkant {
-            background-image: url("bilder/artsy.jpg");
+            background-image: url("bilder/basket.png");
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            width:30px;
-            height: 30px;
-            background-color:red;
+            width:32px;
+            height: 32px;
         }
         #wallRight {
             position: absolute;
@@ -84,13 +91,14 @@
             top: 50%;
             transform: translate(-50%, -50%);
             border: 5px solid #FFFF00;
+            background-color: white;
             padding: 250px;
         }
         .fallingBlock{
             position: absolute;
-            height:20px;
-            width:20px;
-            background-color: blue;
+            height:16px;
+            width:16px;
+            background-image: url("bilder/cookie.png");
         }
         #score{
             position: absolute;
@@ -101,8 +109,8 @@
 </head>
 <body>
 <div id="gameStart">
-    <h1>Welcome to FallingBlocks!</h1>
-    <p>Catch as many blocks you can before any of them hit the bottom. Is RNG on your side?</p>
+    <h1>Welcome to Falling Cookies!</h1>
+    <p>Catch as many cookies you can before any of them hit the bottom. Is RNG on your side?</p>
     <h2>Highscore:</h2> <h2 id="highScore"></h2>
     <button id="gameStartButton">Play</button>
 </div>
@@ -117,30 +125,33 @@
     <div id="scoreBottom" class="B"></div>
 </div>
 <script>
-    let flyttblokk
+    let flyttblokk      //Lager intervals
     let fruktdrop
+
+    let t = 5000        //lagrer verdier
     let resetCheck = 0
     let k = 0;
-    let fruktSpawnEl = document.querySelector('#fruktSpawn')
+
+    let fruktSpawnEl = document.querySelector('#fruktSpawn')    //henter elementer
     let scoreEl = document.querySelector('#score')
     let scoreNumberEl = 0
     let highScoreEl = document.querySelector('#highScore')
     highScoreEl.innerHTML = localStorage.highScore
 
-    if (!localStorage.highScore){
+    if (!localStorage.highScore){       //setter en highscore verdi for første gang
         localStorage.highScore = 0
     }
 
-    function autoflytt() {
+    function autoflytt() {      //flytter cookie
         gsap.set(".fallingBlock",{top:"+=5"})
     }
-    function lagerFrukter(){
+    function lagerCookies(){
         let fruktCreate = document.createElement("div")
 
-        let displaceHeight = Math.floor(Math.random() * -100) + 1;
+        let displaceHeight = Math.floor(Math.random() * -100) + 1;  //plasserer cookie tilfeldig
         let displacewidth = Math.floor(Math.random() * 400) + 1;
 
-        fruktCreate.id='mynt'+k
+        fruktCreate.id='mynt'+k     //gir cookie verdier
         fruktCreate.classList.add('fallingBlock');
         fruktSpawnEl.appendChild(fruktCreate)
         fruktCreate.style.top = displaceHeight + "px";
@@ -150,24 +161,24 @@
     function spilloop() {
         document.onkeydown = flyttfirkant;
 
-        function flyttfirkant(evt) {
+        function flyttfirkant(evt) {    //flytter spiller
             let tast = evt.code;
             if (tast === "KeyD") {
-                gsap.set("#firkant", {left: "+=10"});
+                gsap.set("#firkant", {left: "+=20"});
             }
             if (tast === "KeyA") {
-                gsap.set("#firkant", {left: "-=10"});
+                gsap.set("#firkant", {left: "-=20"});
             }
             if (tast === "KeyW") {
-                gsap.set("#firkant", {top: "-=10"});
+                gsap.set("#firkant", {top: "-=20"});
             }
             if (tast === "KeyS") {
-                gsap.set("#firkant", {top: "+=10"});
+                gsap.set("#firkant", {top: "+=20"});
             }
         }
-        for (let j = 0; j <= k - 1; j++) {
+        for (let j = 0; j <= k - 1; j++) {  //sjekker cookies plassering til vegger og spiller
             if (resetCheck < 1) {
-                if (Draggable.hitTest("#firkant", "#mynt" + j, "2%")) {
+                if (Draggable.hitTest("#firkant", "#mynt" + j, "15%")) {
                     gsap.set('#mynt' + j, {top: 1000})
                     scoreNumberEl++
                     scoreEl.innerHTML = scoreNumberEl
@@ -188,34 +199,33 @@
                 }
             }
         }
-
-        if (Draggable.hitTest("#firkant", ".L", "2%")) {
-            gsap.set("#firkant", {left: "+=10"});
+        if (Draggable.hitTest("#firkant", ".L", "2%")) {    //lager vegger for spiller
+            gsap.set("#firkant", {left: "+=20"});
         }
         if (Draggable.hitTest("#firkant", ".T", "2%")) {
-            gsap.set("#firkant", {top: "+=10"});
+            gsap.set("#firkant", {top: "+=20"});
         }
         if (Draggable.hitTest("#firkant", ".R", "1%")) {
-            gsap.set("#firkant", {left: "-=10"});
+            gsap.set("#firkant", {left: "-=20"});
         }
         if (Draggable.hitTest("#firkant", ".B", "2%")) {
-            gsap.set("#firkant", {top: "-=10"});
+            gsap.set("#firkant", {top: "-=20"});
         }
         requestAnimationFrame(spilloop)
     }
     function gameStart(){
-        flyttblokk = setInterval(autoflytt,50)
-        fruktdrop = setInterval(lagerFrukter,5000)
+        flyttblokk = setInterval(autoflytt,50)  //starter opp spill
+        t = 5000
         resetCheck = 0
         k = 0;
         scoreNumberEl = 0
         scoreEl.innerHTML = scoreNumberEl
-        lagerFrukter()
+        spawnCookies();
         requestAnimationFrame(spilloop)
     }
     function gameOver(){
-        resetCheck = 2
-        let gameEnd = document.createElement("div");
+        resetCheck = 2  //stopper kollisjon-sjekk
+        let gameEnd = document.createElement("div");    //lager elementer
         let gameOverText = document.createElement("h1");
         let gameOverScoreText = document.createElement("h2");
         let gameOverScore = document.createElement("h2");
@@ -223,7 +233,7 @@
         let gameOverHighScore = document.createElement("h2");
         let retry = document.createElement('button');
 
-        gameOverText.innerHTML = 'GAME OVER'
+        gameOverText.innerHTML = 'GAME OVER'    //gir verdier
         gameOverScoreText.innerHTML = 'Score:'
         gameOverScore.innerHTML = scoreNumberEl
         gameOverHighScoreText.innerHTML = 'Highscore:'
@@ -233,7 +243,7 @@
         gameEnd.setAttribute('id','gameStart');
         retry.setAttribute('id','gameStartButton');
 
-        gameEnd.appendChild(gameOverText);
+        gameEnd.appendChild(gameOverText);      //lager game over pop-up
         gameEnd.appendChild(gameOverScoreText);
         gameEnd.appendChild(gameOverScore);
         gameEnd.appendChild(gameOverHighScoreText);
@@ -241,25 +251,33 @@
         gameEnd.appendChild(retry);
         document.body.appendChild(gameEnd)
 
-        retry.addEventListener("click", prepareGame);
+        retry.addEventListener("click", prepareGame);   //knapp for å prøve igjen
     }
-    function prepareGame() {
+    function prepareGame() {  //fjerner game over pop-up
         let gameEndEl = document.getElementById('gameStart')
         gameEndEl.remove();
         console.log('test')
         gameStart()
     }
-    function resetGame() {
+    function resetGame() {      //fjerner all cookies
         clearInterval(flyttblokk)
         clearInterval(fruktdrop)
         while (fruktSpawnEl.firstChild) {
             fruktSpawnEl.removeChild(fruktSpawnEl.lastChild);
         }
     }
+    function speedUp(){
+        t = t * 0.94;   //gjør intervalet fortere
+    }
+    function spawnCookies() {
+        lagerCookies();     //plasserer cookies
+        clearInterval(fruktdrop);
+        speedUp();
+        fruktdrop = setInterval(spawnCookies, t);
+    }
 
     let gameStartButtonEl = document.querySelector("#gameStartButton");
     gameStartButtonEl.addEventListener("click", prepareGame);
-
 </script>
 </body>
 </html>
